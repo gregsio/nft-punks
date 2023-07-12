@@ -12,11 +12,10 @@ async function main() {
   const MAX_SUPPLY = '1000000'
 
   // Deploy Token
-  const Token = await hre.ethers.getContractFactory('Token')
-  let token = await Token.deploy(NAME, SYMBOL, MAX_SUPPLY)
+  let token = await hre.ethers.deployContract('Token', [NAME, SYMBOL, MAX_SUPPLY])
 
-  await token.deployed()
-  console.log(`Token deployed to: ${token.address}\n`)
+  await token.waitForDeployment()
+  console.log(`Token deployed to: ${await token.getAddress()}\n`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

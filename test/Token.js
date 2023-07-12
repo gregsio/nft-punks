@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const { ethers } = require('hardhat');
 
 const tokens = (n) => {
-  return ethers.utils.parseUnits(n.toString(), 'ether')
+  return ethers.parseUnits(n.toString(), 'ether')
 }
 
 const ether = tokens
@@ -101,14 +101,9 @@ describe('Token', () => {
         expect(await token.allowance(deployer.address, exchange.address)).to.equal(amount)
       })
 
-      it('emits an Approval event', async () => {
-        const event = result.events[0]
-        expect(event.event).to.equal('Approval')
-
-        const args = event.args
-        expect(args.owner).to.equal(deployer.address)
-        expect(args.spender).to.equal(exchange.address)
-        expect(args.value).to.equal(amount)
+      it('emits a Transfer event', async () => {
+        await expect(transaction).to.emit(token, 'Approval').
+          withArgs(deployer.address, exchange.address, amount)
       })
 
     })
@@ -137,22 +132,16 @@ describe('Token', () => {
       })
 
       it('transfers token balances', async () => {
-        expect(await token.balanceOf(deployer.address)).to.be.equal(ethers.utils.parseUnits('999900', 'ether'))
+        expect(await token.balanceOf(deployer.address)).to.be.equal(ethers.parseUnits('999900', 'ether'))
         expect(await token.balanceOf(receiver.address)).to.be.equal(amount)
       })
 
       it('rests the allowance', async () => {
         expect(await token.allowance(deployer.address, exchange.address)).to.be.equal(0)
       })
-
       it('emits a Transfer event', async () => {
-        const event = result.events[0]
-        expect(event.event).to.equal('Transfer')
-
-        const args = event.args
-        expect(args.from).to.equal(deployer.address)
-        expect(args.to).to.equal(receiver.address)
-        expect(args.value).to.equal(amount)
+        await expect(transaction).to.emit(token, 'Transfer').
+          withArgs(deployer.address, receiver.address, amount)
       })
 
     })
