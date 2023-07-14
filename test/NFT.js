@@ -95,6 +95,11 @@ describe('NFT', () => {
             it('Emits a mint event', async() => {
                 await expect(transaction).to.emit(nft, 'Mint').withArgs(1, minter.address)
             })
+
+            it('Returns IPFS URI', async() => {
+                expect(await nft.tokenURI(1)).to.equal(`${BASE_URI}1.json`)
+            })
+
         })
 
         describe('Failure', () => {
@@ -122,6 +127,13 @@ describe('NFT', () => {
                 const NFT = await ethers.getContractFactory('NFT')
                 nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
                 await expect(nft.connect(minter).mint(100, {value: ether(0.1)})).to.be.reverted
+            })
+
+            it('It does not returns URIs for invalid tokens', async () => {
+                const ALLOW_MINTING_ON = (Date.now()).toString().slice(0, 10)  // Now
+                const NFT = await ethers.getContractFactory('NFT')
+                nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+                await expect(nft.connect(minter).mint(150, {value: ether(0.1)})).to.be.reverted
             })
     
 
