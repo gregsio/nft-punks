@@ -27,7 +27,6 @@ describe('NFT', () => {
     describe('Deployment', () => {
 
         const ALLOW_MINTING_ON = (Date.now() + 120000).toString().slice(0, 10)
-        const BASE_URI = 'ipfs://QmQ2jnDYecFhrf3asEWjyjZRX1pZSsNWG3qHzmNDvXa9qg/'
 
         beforeEach(async () => {
             const NFT = await ethers.getContractFactory('NFT')
