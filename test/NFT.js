@@ -143,4 +143,26 @@ describe('NFT', () => {
 
 
     })
+    describe('Displaying NFTs', () => {
+
+        beforeEach(async () => {
+            const ALLOW_MINTING_ON = (Date.now()).toString().slice(0, 10)  // Now
+            const NFT = await ethers.getContractFactory('NFT')
+            nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+            
+            transaction = await nft.connect(minter).mint(3, {value: ether(30)})
+            result = await transaction.wait()
+        })
+
+        it('Returns all the NFTs of a given owner', async() => {
+            let tokenIds = await nft.walletOfOwner(minter.address)
+            expect(tokenIds.length).to.equal(3)
+            expect(tokenIds[0]).to.equal(1)
+            expect(tokenIds[1]).to.equal(2)
+            expect(tokenIds[2]).to.equal(3)
+
+        })
+
+    })
+
 })
