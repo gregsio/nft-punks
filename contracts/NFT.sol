@@ -17,6 +17,8 @@ contract NFT is ERC721Enumerable, Ownable{
     uint256 public allowMintingOn;
     bool public paused = false;
 
+    mapping(address => bool) public whitelist;
+
     event Mint(uint256 amount, address minter);
     event Withdraw(uint256 amount, address minter);
 
@@ -37,6 +39,9 @@ contract NFT is ERC721Enumerable, Ownable{
     }
 
     function mint(uint256 _mintAmount) public payable {
+
+        //Must be whitelisted
+        require(whitelist[msg.sender], 'Account is not whitelisted');
         
         // Allow minting only after specified time
         require(block.timestamp >= allowMintingOn, 'Minting is not yet available');
@@ -100,6 +105,12 @@ contract NFT is ERC721Enumerable, Ownable{
 
     function setCost(uint256 _newCost) public onlyOwner {
         cost = _newCost;
+    }
+
+    function whitelistAdd(address[] memory _addresslist) public onlyOwner {
+        for ( uint i = 0; i < _addresslist.length; i++) {
+            whitelist[_addresslist[i]] = true;
+        }
     }
 
 }
