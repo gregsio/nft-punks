@@ -134,7 +134,21 @@ describe('NFT', () => {
                 nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
                 await expect(nft.connect(minter).mint(150, {value: ether(0.1)})).to.be.reverted
             })
-    
+
+            it('Rejects minting when paused', async () => {
+                const ALLOW_MINTING_ON = (Date.now()).toString().slice(0, 10)  // Now
+                const NFT = await ethers.getContractFactory('NFT')
+                nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+                await nft.connect(deployer).pauseMinting()
+                await expect(nft.connect(minter).mint(1, {value: ether(0.1)})).to.be.revertedWith('Minting has been paused, try again later')
+            })
+
+            it('Rejects pausing by non-owner', async () => {
+                const ALLOW_MINTING_ON = (Date.now()).toString().slice(0, 10)  // Now
+                const NFT = await ethers.getContractFactory('NFT')
+                nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+                await expect (nft.connect(minter).pauseMinting()).to.be.revertedWith('Ownable: caller is not the owner')
+            })
 
         })
 
