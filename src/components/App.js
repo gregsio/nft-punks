@@ -8,6 +8,7 @@ import Navigation from './Navigation';
 import Loading from './Loading';
 import Data from './Data';
 import Mint from './Mint';
+import NFTCarousel from './NFTCarousel'
 
 // ABIs: Import your contract ABIs here
 import NFT_ABI from '../abis/NFT.json'
@@ -21,16 +22,15 @@ function App() {
 
   const [provider, setProvider] = useState(null)
   const [nft, setNft] = useState(null)
-
   const [account, setAccount] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-
   const [revealTime, setRevealTime,] = useState(0)
   const [maxSupply, setMaxSupply] = useState(0)
   const [totalSupply, setTotalSupply] = useState(0)
   const [cost, setCost] = useState(0)
   const [balance, setBalance] = useState(0)
   const [tokenIds, setTokenIds] = useState([])
+  const [isWhitelisted, setIsWhitelisted] = useState([])
 
   const loadBlockchainData = async () => {
     
@@ -67,6 +67,9 @@ function App() {
     // Fetch token IDs
     setTokenIds(await nft.walletOfOwner(account))
 
+    //Fetch whitelist
+    setIsWhitelisted(await nft.whitelist(account))
+
     setIsLoading(false)
   }
 
@@ -79,37 +82,32 @@ function App() {
   return(
     <Container>
       <Navigation account={account} />
-
-      <h1 className='my-4 text-center'>Punks NFT Collection</h1>
-
+      <h1 className='my-5 text-center'>Punks NFT Collection</h1>
       {isLoading ? (
         <Loading />
       ) : (
         <>
-          <Row>
+          <Row >
             <Col>
-
-          {balance ? (
-            <div className='text-center'>
-              <img src={`https://gateway.pinata.cloud/ipfs/QmQPEMsfd1tJnqYPbnTQCjoa8vczfsV1FmqZWgRdNQ7z3g/${tokenIds[tokenIds.length - 1]}.png`} 
-                alt="Open Punk" 
-                width="400px" 
-                height="400px"/>
-            </div>
-          ) : (
-            <div className='text-center'>
-              <img src={preview} alt=""/>
-            </div>
-          )}
-
-              
+              {balance ? (
+                  <div className='text-center'>
+                      <NFTCarousel tokenIds={tokenIds} ipfsURI={'https://gateway.pinata.cloud/ipfs/QmQPEMsfd1tJnqYPbnTQCjoa8vczfsV1FmqZWgRdNQ7z3g/'}/>
+                  </div>
+                ) : (
+                  <div className='text-center'>
+                    <img src={preview} alt=""/>
+                  </div>
+              )}
             </Col>
             <Col>
-              <div className='my-4 text-center'>
+             {/* hide when timer is at 00 00 000 */}
+              <div className='my-5 text-center' >
                 <Countdown date={parseInt(revealTime)} className='h2'/>
               </div>
-              <Data maxSupply={maxSupply} totalSupply={totalSupply} cost={cost} balance={balance}/>
-              <Mint nft={nft} provider={provider} cost={cost} setIsLoading={setIsLoading}/>
+              <div className='my-5 text-center' >
+                <Data maxSupply={maxSupply} totalSupply={totalSupply} cost={cost} balance={balance}/>
+                <Mint nft={nft} provider={provider} cost={cost} setIsLoading={setIsLoading} isWhitelisted={isWhitelisted}/>
+              </div>
             </Col>
           </Row>
         </>

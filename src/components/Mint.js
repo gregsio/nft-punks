@@ -1,7 +1,7 @@
 import { Form, Button, Spinner } from 'react-bootstrap';
 import { useState } from 'react';
 
-const Mint = ({provider, nft, cost, setIsLoading}) => {
+const Mint = ({provider, nft, cost, setIsLoading, isWhitelisted}) => {
     const [isWaiting, setIsWaiting] = useState(false)
 
     const mintHandler = async(e) => {
@@ -18,7 +18,6 @@ const Mint = ({provider, nft, cost, setIsLoading}) => {
         }
 
         setIsLoading(true)
-
     }
 
     return(
@@ -26,12 +25,13 @@ const Mint = ({provider, nft, cost, setIsLoading}) => {
             {isWaiting ? (
                 <Spinner animation="border" style={{display:'block', margin:'50px auto'}} />
             ) : (
-            <Form.Group >
-                <Button variant="primary" type="submit" style={{ width: '100%' }}>Mint</Button>
-            </Form.Group>
-
-            )
-            }
+                <Form.Group>
+                    {isWhitelisted ? (
+                        <Button variant="primary" type="submit" style={{ width: '100%' }}>Mint</Button>
+                    ):(<p>Your account is currently not elligble for this NFT auction, please reach out to our staff on Discord</p>)
+                }
+                </Form.Group>
+            )}
         </Form>
     )
 }
