@@ -1,8 +1,13 @@
 import { Form, Button, Spinner } from 'react-bootstrap';
 import { useState } from 'react';
 
-const Mint = ({provider, nft, cost, setIsLoading, isWhitelisted}) => {
+/* global BigInt */
+
+const Mint = ({provider, nft, cost, setIsLoading, isWhitelisted, maxSupply, totalSupply}) => {
+    const [mintAmount, setMintAmount] = useState(null)
     const [isWaiting, setIsWaiting] = useState(false)
+    const [availableToMint, setAvailableToMint] = useState((maxSupply - totalSupply).toString())
+
 
     const mintHandler = async(e) => {
         e.preventDefault()
@@ -10,7 +15,8 @@ const Mint = ({provider, nft, cost, setIsLoading, isWhitelisted}) => {
 
         try {
             const signer = await provider.getSigner()
-            const transaction = await nft.connect(signer).mint(1, {value: cost})
+            console.log("Minting", mintAmount)
+            const transaction = await nft.connect(signer).mint(mintAmount, {value: cost * BigInt(mintAmount)})
             await transaction.wait()
         }
         catch{
@@ -21,17 +27,28 @@ const Mint = ({provider, nft, cost, setIsLoading, isWhitelisted}) => {
     }
 
     return(
-        <Form onSubmit={mintHandler} style={{ maxWidth:'450px', margin: '50px auto' }} >
-            {isWaiting ? (
-                <Spinner animation="border" style={{display:'block', margin:'50px auto'}} />
-            ) : (
-                <Form.Group>
-                    {isWhitelisted ? (
-                        <Button variant="primary" type="submit" style={{ width: '100%' }}>Mint</Button>
-                    ):(<p>Your account is currently not elligble for this NFT auction, please reach out to our staff on Discord</p>)
-                }
-                </Form.Group>
-            )}
+        <Form onSubmit={mintHandler}>
+            <Form.Group style={{ maxWidth:'400px', margin:'50px auto'}}>
+                {isWhitelisted ? (
+                    <Form.Control
+                        placeholder='Enter amount'
+                        type='number'
+                        className='my-2'
+                        min="1"
+                        max={availableToMint}
+                        onChange={(e) => {setMintAmount(e.target.value)}}
+                        disabled={ availableToMint > 0 ? false: true}
+
+                    />
+                ) : (
+                    <p>Your account is currently not elligble for this NFT auction, please reach out to our staff on Discord</p>
+                )}
+                    {isWaiting ? (
+                        <Spinner  animation="border" style={{ display: 'block', margin: '0 auto' }}/>
+                    ) : (
+                        <Button variant='primary' type='submit' style={{width:'100%'}} disabled={ availableToMint > 0 & isWhitelisted? false : 'disabled'} >Mint NFT(s)</Button>
+                    )}
+            </Form.Group>
         </Form>
     )
 }

@@ -73,28 +73,28 @@ describe('NFT', () => {
                 
                 await nft.connect(deployer).whitelistAdd([minter.address])
 
-                transaction = await nft.connect(minter).mint(1, {value: COST})
+                transaction = await nft.connect(minter).mint(10, {value: COST * BigInt(10)})
                 result = await transaction.wait()
             })
 
             it('Returns the address of the minter', async() => {
-                expect( await nft.ownerOf(1)).to.equal(minter.address)
+                expect( await nft.ownerOf(10)).to.equal(minter.address)
             })
 
             it('Returns the total number of tokens a minter owns', async() => {
-                expect( await nft.balanceOf(minter.address)).to.equal(1)
+                expect( await nft.balanceOf(minter.address)).to.equal(10)
             })
 
             it('Updates the total supply', async() => {
-                expect(await nft.totalSupply()).to.equal(1)
+                expect(await nft.totalSupply()).to.equal(10)
             })
 
             it('Updates the contract ether balance', async() => {
-                expect(await ethers.provider.getBalance(nft)).to.equal(COST)
+                expect(await ethers.provider.getBalance(nft)).to.equal(COST * 10n)
             })
 
             it('Emits a mint event', async() => {
-                await expect(transaction).to.emit(nft, 'Mint').withArgs(1, minter.address)
+                await expect(transaction).to.emit(nft, 'Mint').withArgs(10, minter.address)
             })
 
             it('Returns IPFS URI', async() => {

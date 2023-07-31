@@ -106,7 +106,7 @@ function App() {
               </div>
               <div className='my-5 text-center' >
                 <Data maxSupply={maxSupply} totalSupply={totalSupply} cost={cost} balance={balance}/>
-                <Mint nft={nft} provider={provider} cost={cost} setIsLoading={setIsLoading} isWhitelisted={isWhitelisted}/>
+                <Mint nft={nft} provider={provider} cost={cost} setIsLoading={setIsLoading} isWhitelisted={isWhitelisted} maxSupply={maxSupply} totalSupply={totalSupply}/>
               </div>
             </Col>
           </Row>

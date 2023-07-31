@@ -49,8 +49,8 @@ contract NFT is ERC721Enumerable, Ownable{
         // Allow minting only if not paused
         require(!paused, 'Minting has been paused, try again later');
 
-        // Require enought payment
-        require(msg.value >= cost * _mintAmount);
+        // Require enough payment
+        require(msg.value >= cost * _mintAmount, "not enough funds");
 
         // Must mint at least 1 NFT
         require(_mintAmount > 0 );

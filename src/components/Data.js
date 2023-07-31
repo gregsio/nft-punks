@@ -6,7 +6,7 @@ const Data =  ({maxSupply, totalSupply, cost, balance}) => {
         <div className="text-center">
             <p><strong>Available to Mint:</strong> {(maxSupply - totalSupply).toString()}</p>
             <p><strong>Cost to Mint</strong> {ethers.formatUnits(cost, 'ether')} ETH</p>
-            <p><strong>You own</strong> {balance.toString()} NFT(s)</p>    
+            <p><strong>You own</strong> {balance.toString()} NFT(s)</p>
         </div>
     )
 }

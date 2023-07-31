@@ -11,7 +11,7 @@ const NFTCarousel = ({tokenIds, ipfsURI}) => {
     let itemList=[];
     tokenIds.forEach((item,index)=>{
       itemList.push( 
-        <Carousel.Item>
+        <Carousel.Item key={index}>
             <img src={`${ipfsURI}${item}.png`} alt="Open Punk" />
             <Carousel.Caption>
             {/* <h3>First slide label</h3>
